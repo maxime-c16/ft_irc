@@ -6,7 +6,7 @@
 /*   By: mcauchy <mcauchy@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/01 13:23:30 by mcauchy           #+#    #+#             */
-/*   Updated: 2024/07/01 15:06:43 by mcauchy          ###   ########.fr       */
+/*   Updated: 2024/07/01 17:07:17 by mcauchy          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,17 @@ int	main(int ac, char **av)
 
 	IRCServer	server(port, password);
 
-	server.start();
+	try
+	{
+		signal(SIGINT, &IRCServer::signal_handler);
+		signal(SIGQUIT, &IRCServer::signal_handler);
+		server.start();
+	}
+	catch ( const std::exception &e )
+	{
+		close(server.GetServerFD());
+		std::cerr << e.what() << std::endl;
+	}
+	std::cout << "Server closed." << std::endl;
 	return (0);
 }

@@ -1,26 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   irc_server.cpp                                     :+:      :+:    :+:   */
+/*   IRCServer.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mcauchy <mcauchy@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/01 14:07:09 by mcauchy           #+#    #+#             */
-/*   Updated: 2024/07/01 15:23:51 by mcauchy          ###   ########.fr       */
+/*   Updated: 2024/07/01 17:20:20 by mcauchy          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/irc_server.hpp"
-
-ClientFdComparator::ClientFdComparator( int fd ) : client_fd(fd)
-{
-
-}
-
-bool	ClientFdComparator::operator()( const pollfd &pfd ) const
-{
-	return (pfd.fd == client_fd);
-}
+#include "../includes/IRCServer.hpp"
 
 IRCServer::IRCServer( int port, const std::string &password) : _port(port), _server_fd(-1), _password(password)
 {
@@ -37,6 +27,19 @@ IRCServer::IRCServer( int port, const std::string &password) : _port(port), _ser
 IRCServer::~IRCServer( void )
 {
 	close(_server_fd);
+}
+
+int	IRCServer::GetServerFD( void )
+{
+	return (_server_fd);
+}
+
+bool	IRCServer::_signal = false;
+void	IRCServer::signal_handler( int signum )
+{
+	(void)signum;
+	std::cout << std::endl << "Signal received" << std::endl;
+	_signal = true;
 }
 
 void	IRCServer::error( const std::string &msg )
@@ -131,13 +134,14 @@ void	IRCServer::start( void )
 {
 	int		poll_count;
 	int		client_fd;
+	pollfd	client_pfd;
 	size_t	i;
 
-	while (42)
+	while (_signal == false)
 	{
 		poll_count = poll(_pollfds.data(), _pollfds.size(), -1);
-		if (poll_count < 0)
-			error("Error: Cannot poll from pfds.data");
+		if (poll_count < 0 && IRCServer::_signal == false)
+			throw (std::runtime_error("Error: poll"));
 		i = 0;
 		while (i < _pollfds.size())
 		{
@@ -148,7 +152,9 @@ void	IRCServer::start( void )
 					client_fd = accept_new_client();
 					if (client_fd >= 0)
 					{
-						pollfd	client_pfd = { client_fd, POLLIN, 0 };
+						client_pfd.fd = client_fd;
+						client_pfd.events = POLLIN;
+						client_pfd.revents = 0;
 						_pollfds.push_back(client_pfd);
 						_clients[client_fd] = "";
 					}
@@ -159,4 +165,14 @@ void	IRCServer::start( void )
 			i++;
 		}
 	}
+}
+
+IRCServer::ClientFdComparator::ClientFdComparator( int fd ) : client_fd(fd)
+{
+
+}
+
+bool	IRCServer::ClientFdComparator::operator()( const pollfd &pfd ) const
+{
+	return (pfd.fd == client_fd);
 }

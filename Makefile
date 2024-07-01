@@ -6,11 +6,11 @@
 #    By: mcauchy <mcauchy@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/07/01 13:04:54 by mcauchy           #+#    #+#              #
-#    Updated: 2024/07/01 15:07:16 by mcauchy          ###   ########.fr        #
+#    Updated: 2024/07/01 16:14:30 by mcauchy          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-FILES		=	main.cpp irc_server.cpp
+FILES		=	main.cpp IRCServer.cpp
 
 SRC_DIR		=	srcs
 

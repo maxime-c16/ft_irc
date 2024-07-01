@@ -6,7 +6,7 @@
 /*   By: mcauchy <mcauchy@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/01 13:15:10 by mcauchy           #+#    #+#             */
-/*   Updated: 2024/07/01 13:50:58 by mcauchy          ###   ########.fr       */
+/*   Updated: 2024/07/01 16:50:16 by mcauchy          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,8 @@
 # include <unistd.h>
 # include <fcntl.h>
 # include <poll.h>
+# include <csignal>
 
-# include "irc_server.hpp"
+# include "IRCServer.hpp"
 
 #endif
