@@ -6,7 +6,7 @@
 /*   By: mcauchy <mcauchy@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/01 13:23:30 by mcauchy           #+#    #+#             */
-/*   Updated: 2024/07/01 17:07:17 by mcauchy          ###   ########.fr       */
+/*   Updated: 2024/07/02 15:30:17 by mcauchy          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ int	main(int ac, char **av)
 	port = 0;
 	if (ac != 3)
 	{
-		std::cerr << "Usage : " << av[0] << "<port> <password>" << std::endl;
+		std::cerr << "Usage : " << av[0] << " <port> <password>" << std::endl;
 		return (EXIT_FAILURE);
 	}
 

@@ -6,7 +6,7 @@
 /*   By: mcauchy <mcauchy@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/01 13:51:03 by mcauchy           #+#    #+#             */
-/*   Updated: 2024/07/01 17:15:30 by mcauchy          ###   ########.fr       */
+/*   Updated: 2024/07/04 16:12:45 by mcauchy          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,29 +15,33 @@
 # define IRC_SERVER_HPP
 
 # include "ft_irc.hpp"
+# include "IRCCommand.hpp"
 
+class	Channel;
 
 class	IRCServer
 {
 	public:
 
+		IRCServer( void );
 		IRCServer(int port, const std::string &password);
-		~IRCServer();
+		~IRCServer( void );
 
 		static void	signal_handler( int signum );
 		void		start( void );
 		int			GetServerFD( void );
+		std::map<int, ClientInfo>		clients;
+		std::map<std::string, Channel>	channels;
+		std::string						password;
 
 
 	private:
 
-		static bool					_signal;
-		int							_port;
-		int							_server_fd;
-		std::string					_password;
-		std::map<int, std::string>	_clients;
-		std::vector<pollfd>			_pollfds;
-		sockaddr_in					_server_addr;
+		static bool						_signal;
+		int								_port;
+		int								_server_fd;
+		std::vector<pollfd>				_pollfds;
+		sockaddr_in						_server_addr;
 
 		void	error( const std::string &msg );
 		void	set_non_blocking( int sockfd );
@@ -47,7 +51,9 @@ class	IRCServer
 		void	start_listening( void );
 		int		accept_new_client( void );
 		void	handle_client_message( int client_fd );
+		void	process_command( int client_fd, const std::string &message);
 
+		IRCCommand	*create_command( const std::string &command_name);
 
 		struct ClientFdComparator
 		{

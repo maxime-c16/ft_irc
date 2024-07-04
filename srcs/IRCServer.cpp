@@ -6,13 +6,18 @@
 /*   By: mcauchy <mcauchy@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/01 14:07:09 by mcauchy           #+#    #+#             */
-/*   Updated: 2024/07/01 17:20:20 by mcauchy          ###   ########.fr       */
+/*   Updated: 2024/07/04 22:59:21 by mcauchy          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/IRCServer.hpp"
 
-IRCServer::IRCServer( int port, const std::string &password) : _port(port), _server_fd(-1), _password(password)
+IRCServer::IRCServer( void )
+{
+
+}
+
+IRCServer::IRCServer( int port, const std::string &password) : password(password), _port(port), _server_fd(-1)
 {
 	create_server_socket();
 	set_non_blocking(_server_fd);
@@ -121,13 +126,52 @@ void	IRCServer::handle_client_message( int client_fd )
 		close(client_fd);
 		std::vector<pollfd>::iterator it = std::remove_if(_pollfds.begin(), _pollfds.end(), ClientFdComparator(client_fd));
 		_pollfds.erase(it, _pollfds.end());
-		_clients.erase(client_fd);
+		clients.erase(client_fd);
 	}
 	else
 	{
 		std::cout << "Received message from " << client_fd << ": " << buffer << std::endl;
-		// Handle client message
+		process_command(client_fd, buffer);
 	}
+}
+
+void	IRCServer::process_command( int client_fd, const std::string &message )
+{
+	std::istringstream	iss(message);
+	std::string			command;
+
+	iss >> command;
+	if (!command.empty())
+	{
+		IRCCommand	*cmd = create_command(command);
+		cmd->execute(*this, client_fd, iss);
+		delete cmd;
+	}
+	else
+		send(client_fd, "Error: command missing, try `CMD <args>`.\r\n", 44, 0);
+}
+
+IRCCommand	*IRCServer::create_command( const std::string &command_name)
+{
+	if (command_name == "NICK")
+		return new NickCmd();
+	else if (command_name == "PASS")
+		return new PassCmd();
+	else if (command_name == "USER")
+		return new UserCmd();
+	else if (command_name == "OPER")
+		return new OperCmd();
+	else if (command_name == "PING")
+		return new PingCmd();
+	else if (command_name == "KILL")
+		return new KillCmd();
+	else if (command_name == "QUIT")
+		return new QuitCmd();
+	else if (command_name == "JOIN")
+		return new JoinCmd();
+	else if (command_name == "PART")
+		return new PartCmd();
+	return (nullptr);
 }
 
 void	IRCServer::start( void )
@@ -156,7 +200,7 @@ void	IRCServer::start( void )
 						client_pfd.events = POLLIN;
 						client_pfd.revents = 0;
 						_pollfds.push_back(client_pfd);
-						_clients[client_fd] = "";
+						clients[client_fd].username = "";
 					}
 				}
 				else

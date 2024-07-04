@@ -6,7 +6,7 @@
 /*   By: mcauchy <mcauchy@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/01 13:15:10 by mcauchy           #+#    #+#             */
-/*   Updated: 2024/07/01 16:50:16 by mcauchy          ###   ########.fr       */
+/*   Updated: 2024/07/04 22:39:13 by mcauchy          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,7 @@
 # include <cstring>
 # include <vector>
 # include <map>
+# include <set>
 # include <netinet/in.h>
 # include <sys/types.h>
 # include <sys/socket.h>
@@ -29,7 +30,30 @@
 # include <fcntl.h>
 # include <poll.h>
 # include <csignal>
+# include <sstream>
 
+typedef struct s_ClientInfo
+{
+	std::string	nickname;
+	std::string	username;
+	std::string	realname;
+	std::string	password;
+	std::string	current_channel;
+	bool		is_registered;
+	bool		is_operator;
+}				ClientInfo;
+
+# include "Channel.hpp"
 # include "IRCServer.hpp"
+# include "NickCmd.hpp"
+# include "PassCmd.hpp"
+# include "UserCmd.hpp"
+# include "OperCmd.hpp"
+# include "PingCmd.hpp"
+# include "KillCmd.hpp"
+# include "QuitCmd.hpp"
+# include "JoinCmd.hpp"
+# include "PartCmd.hpp"
+# include "IRCCommand.hpp"
 
 #endif
