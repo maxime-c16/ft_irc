@@ -6,13 +6,14 @@
 #    By: mcauchy <mcauchy@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/07/01 13:04:54 by mcauchy           #+#    #+#              #
-#    Updated: 2024/07/04 22:54:47 by mcauchy          ###   ########.fr        #
+#    Updated: 2024/07/05 13:09:57 by mcauchy          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 FILES		=	main.cpp IRCServer.cpp Channel.cpp NickCmd.cpp IRCCommand.cpp \
 				PassCmd.cpp UserCmd.cpp OperCmd.cpp PingCmd.cpp KillCmd.cpp \
-				QuitCmd.cpp JoinCmd.cpp PartCmd.cpp
+				QuitCmd.cpp JoinCmd.cpp PartCmd.cpp InviteCmd.cpp AcceptCmd.cpp \
+				RejectCmd.cpp
 
 SRC_DIR		=	srcs
 

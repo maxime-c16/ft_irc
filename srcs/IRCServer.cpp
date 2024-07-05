@@ -6,7 +6,7 @@
 /*   By: mcauchy <mcauchy@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/01 14:07:09 by mcauchy           #+#    #+#             */
-/*   Updated: 2024/07/04 22:59:21 by mcauchy          ###   ########.fr       */
+/*   Updated: 2024/07/05 13:11:48 by mcauchy          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -130,7 +130,7 @@ void	IRCServer::handle_client_message( int client_fd )
 	}
 	else
 	{
-		std::cout << "Received message from " << client_fd << ": " << buffer << std::endl;
+		std::cout << "Received message from " << client_fd << ": " << buffer << "\r\n" << std::endl;
 		process_command(client_fd, buffer);
 	}
 }
@@ -144,6 +144,11 @@ void	IRCServer::process_command( int client_fd, const std::string &message )
 	if (!command.empty())
 	{
 		IRCCommand	*cmd = create_command(command);
+		if (!cmd)
+		{
+			//handle sending message conditionnaly (i.e: broadcast to channel)
+			return ;
+		}
 		cmd->execute(*this, client_fd, iss);
 		delete cmd;
 	}
@@ -171,6 +176,14 @@ IRCCommand	*IRCServer::create_command( const std::string &command_name)
 		return new JoinCmd();
 	else if (command_name == "PART")
 		return new PartCmd();
+	else if (command_name == "JOIN")
+		return new JoinCmd();
+	else if (command_name == "INVITE")
+		return new InviteCmd();
+	else if (command_name == "ACCEPT")
+		return new AcceptCmd();
+	else if (command_name == "REJECT")
+		return new RejectCmd();
 	return (nullptr);
 }
 

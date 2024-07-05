@@ -6,7 +6,7 @@
 /*   By: mcauchy <mcauchy@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/01 13:15:10 by mcauchy           #+#    #+#             */
-/*   Updated: 2024/07/04 22:39:13 by mcauchy          ###   ########.fr       */
+/*   Updated: 2024/07/05 13:03:22 by mcauchy          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,7 @@ typedef struct s_ClientInfo
 	std::string	realname;
 	std::string	password;
 	std::string	current_channel;
+	std::string	pending_invite;
 	bool		is_registered;
 	bool		is_operator;
 }				ClientInfo;
@@ -54,6 +55,9 @@ typedef struct s_ClientInfo
 # include "QuitCmd.hpp"
 # include "JoinCmd.hpp"
 # include "PartCmd.hpp"
+# include "InviteCmd.hpp"
+# include "AcceptCmd.hpp"
+# include "RejectCmd.hpp"
 # include "IRCCommand.hpp"
 
 #endif
