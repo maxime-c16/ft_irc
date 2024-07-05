@@ -6,7 +6,7 @@
 /*   By: mcauchy <mcauchy@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/04 22:39:24 by mcauchy           #+#    #+#             */
-/*   Updated: 2024/07/05 13:16:21 by mcauchy          ###   ########.fr       */
+/*   Updated: 2024/07/05 15:43:03 by mcauchy          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,10 +27,10 @@ void	PartCmd::execute(IRCServer &server, int client_fd, std::istringstream &iss)
 	it = server.channels.find(channel_name);
 	if (it != server.channels.end() && it->second.is_member(client_fd))
 	{
-		it->second.remove_member(client_fd);
 		std::string part_message = ":" + server.clients[client_fd].nickname + " PART " + channel_name + "\r\n";
-		send(client_fd, part_message.c_str(), part_message.size(), 0);
-		//broadcast to all members channel
+		server.channels[channel_name].broadcast(part_message);
+		it->second.remove_member(client_fd);
+		server.clients[client_fd].current_channel.clear();
 		std::cout << "Client " << client_fd << " left channel: " << channel_name << "\r\n" << std::endl;
 	}
 	else

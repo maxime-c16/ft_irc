@@ -6,7 +6,7 @@
 /*   By: mcauchy <mcauchy@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/05 11:32:04 by mcauchy           #+#    #+#             */
-/*   Updated: 2024/07/05 11:59:45 by mcauchy          ###   ########.fr       */
+/*   Updated: 2024/07/05 16:19:08 by mcauchy          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,13 +27,16 @@ void	AcceptCmd::execute(IRCServer &server, int client_fd, std::istringstream &is
 	std::map<std::string, Channel>::iterator	it;
 
 	it = server.channels.find(channel_name);
-	if (it != server.channels.end())
+	if (it != server.channels.end() && server.channels[channel_name].is_member(client_fd))
 	{
-		server.channels[channel_name] = Channel(channel_name);
+		send(client_fd, "Error: Client already in channel...\r\n", 38, 0);
+		client.pending_invite.clear();
+		return ;
 	}
-	else
+	else if (it == server.channels.end())
 	{
 		send(client_fd, "Error: Channel not found, try `JOIN <channel>`.\r\n", 50, 0);
+		client.pending_invite.clear();
 		return ;
 	}
 
@@ -42,8 +45,6 @@ void	AcceptCmd::execute(IRCServer &server, int client_fd, std::istringstream &is
 	client.pending_invite.clear();
 
 	std::string join_message = ":" + client.nickname + " JOIN " + channel_name + "\r\n";
-	std::set<int>	members = server.channels[channel_name].GetMembers();
-	for (std::set<int>::iterator member_it = members.begin(); member_it != members.end(); member_it++)
-		send(*member_it, join_message.c_str(), join_message.size(), 0);
+	server.channels[channel_name].broadcast(join_message);
 	std::cout << "Client " << client_fd << " accepted invitation and joined channel " << channel_name << std::endl;
 }

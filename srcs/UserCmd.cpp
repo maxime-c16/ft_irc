@@ -6,7 +6,7 @@
 /*   By: mcauchy <mcauchy@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/04 19:43:45 by mcauchy           #+#    #+#             */
-/*   Updated: 2024/07/04 19:46:06 by mcauchy          ###   ########.fr       */
+/*   Updated: 2024/07/05 16:09:50 by mcauchy          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,7 @@ void	UserCmd::execute(IRCServer &server, int client_fd, std::istringstream &iss)
 		server.clients[client_fd].username = username;
 		server.clients[client_fd].realname = realname;
 		server.clients[client_fd].is_registered = true;
+		server.clients[client_fd].client_fd = client_fd;
 		std::cout << "Client " << client_fd << " registered with username " << username << " and realname " << realname << std::endl;
 	}
 	else

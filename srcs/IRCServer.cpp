@@ -6,7 +6,7 @@
 /*   By: mcauchy <mcauchy@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/01 14:07:09 by mcauchy           #+#    #+#             */
-/*   Updated: 2024/07/05 13:11:48 by mcauchy          ###   ########.fr       */
+/*   Updated: 2024/07/05 16:11:46 by mcauchy          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -146,7 +146,14 @@ void	IRCServer::process_command( int client_fd, const std::string &message )
 		IRCCommand	*cmd = create_command(command);
 		if (!cmd)
 		{
-			//handle sending message conditionnaly (i.e: broadcast to channel)
+			if (this->channels.find(this->clients[client_fd].current_channel) != this->channels.end())
+			{
+				this->channels[this->clients[client_fd].current_channel].broadcast_except(this->clients[client_fd], message);
+			}
+			else
+			{
+				send(client_fd, "Error: Join a channel to start speaking, try `JOIN <channel>`.\r\n", 65, 0);
+			}
 			return ;
 		}
 		cmd->execute(*this, client_fd, iss);
@@ -184,6 +191,8 @@ IRCCommand	*IRCServer::create_command( const std::string &command_name)
 		return new AcceptCmd();
 	else if (command_name == "REJECT")
 		return new RejectCmd();
+	else if (command_name == "KICK")
+		return new KickCmd();
 	return (nullptr);
 }
 

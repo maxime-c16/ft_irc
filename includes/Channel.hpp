@@ -6,7 +6,7 @@
 /*   By: mcauchy <mcauchy@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/03 14:18:32 by mcauchy           #+#    #+#             */
-/*   Updated: 2024/07/04 16:11:22 by mcauchy          ###   ########.fr       */
+/*   Updated: 2024/07/05 16:08:00 by mcauchy          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,8 @@ class	Channel
 		void	add_member( int client_fd );
 		void	remove_member( int client_fd );
 		bool	is_member( int client_fd );
+		void	broadcast( const std::string &message );
+		void	broadcast_except( ClientInfo &client , const std::string &message );
 
 		void	SetName( const std::string &name );
 		void	SetMembers( int client_fd );

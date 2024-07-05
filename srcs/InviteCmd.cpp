@@ -6,7 +6,7 @@
 /*   By: mcauchy <mcauchy@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/05 11:01:32 by mcauchy           #+#    #+#             */
-/*   Updated: 2024/07/05 11:51:14 by mcauchy          ###   ########.fr       */
+/*   Updated: 2024/07/05 15:25:17 by mcauchy          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,19 @@ void	InviteCmd::execute(IRCServer &server, int client_fd, std::istringstream &is
 			target_fd = it->first;
 			break ;
 		}
+	}
+
+	std::map<std::string, Channel>::iterator it = server.channels.find(channel_name);
+
+	if (it == server.channels.end())
+	{
+		send(client_fd, "Error: Channel not found.\r\n", 28, 0);
+		return ;
+	}
+	else if (!server.channels[channel_name].is_member(client_fd))
+	{
+		send(client_fd, "Error: User not in channel, try `JOIN <channel>`.\r\n", 52, 0);
+		return ;
 	}
 
 	if (target_fd == -1)

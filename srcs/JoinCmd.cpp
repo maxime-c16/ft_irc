@@ -6,7 +6,7 @@
 /*   By: mcauchy <mcauchy@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/04 21:23:21 by mcauchy           #+#    #+#             */
-/*   Updated: 2024/07/05 12:22:39 by mcauchy          ###   ########.fr       */
+/*   Updated: 2024/07/05 15:13:30 by mcauchy          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,11 @@ void	JoinCmd::execute(IRCServer &server, int client_fd, std::istringstream &iss)
 	if (it == server.channels.end())
 	{
 		server.channels[channel_name] = Channel(channel_name);
+	}
+	else if (server.channels[channel_name].is_member(client_fd))
+	{
+		send(client_fd, "Error: Client is already in channel.\r\n", 39, 0);
+		return ;
 	}
 	server.channels[channel_name].add_member(client_fd);
 	server.clients[client_fd].current_channel = channel_name;
