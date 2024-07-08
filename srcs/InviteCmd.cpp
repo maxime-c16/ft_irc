@@ -6,7 +6,7 @@
 /*   By: mcauchy <mcauchy@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/05 11:01:32 by mcauchy           #+#    #+#             */
-/*   Updated: 2024/07/05 15:25:17 by mcauchy          ###   ########.fr       */
+/*   Updated: 2024/07/07 14:42:08 by mcauchy          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,6 +51,11 @@ void	InviteCmd::execute(IRCServer &server, int client_fd, std::istringstream &is
 	if (target_fd == -1)
 	{
 		send(client_fd, "Error: User not found.\r\n", 25, 0);
+		return ;
+	}
+	else if (!server.clients[target_fd].current_channel.empty())
+	{
+		send(client_fd, "Error: Target user already in a channel, try `PRIVMSG <user> :message`.\r\n", 74, 0);
 		return ;
 	}
 

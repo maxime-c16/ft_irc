@@ -6,7 +6,7 @@
 /*   By: mcauchy <mcauchy@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/05 14:34:26 by mcauchy           #+#    #+#             */
-/*   Updated: 2024/07/05 15:42:35 by mcauchy          ###   ########.fr       */
+/*   Updated: 2024/07/08 16:56:04 by mcauchy          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@ void	KickCmd::execute(IRCServer &server, int client_fd, std::istringstream &iss)
 	std::string	nickname;
 	std::string	channel_name;
 	int			target_fd;
+	ClientInfo	&client = server.clients[client_fd];
 
 	target_fd = -1;
 	iss >> nickname >> channel_name;
@@ -48,7 +49,7 @@ void	KickCmd::execute(IRCServer &server, int client_fd, std::istringstream &iss)
 			if (target_fd != -1)
 			{
 				std::string kick_message = ":" + server.clients[client_fd].nickname + " KICK " + nickname + " from " + channel_name + "\r\n";
-				server.channels[channel_name].broadcast(kick_message);
+				server.channels[channel_name].add_message(client, kick_message, server);
 				server.channels[channel_name].remove_member(target_fd);
 				server.clients[target_fd].current_channel.clear();
 				std::cout << "Client " << client_fd << " kicked " << nickname << " from channel " << channel_name << "\r\n" << std::endl;

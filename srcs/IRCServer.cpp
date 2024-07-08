@@ -6,7 +6,7 @@
 /*   By: mcauchy <mcauchy@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/01 14:07:09 by mcauchy           #+#    #+#             */
-/*   Updated: 2024/07/05 16:11:46 by mcauchy          ###   ########.fr       */
+/*   Updated: 2024/07/08 16:31:32 by mcauchy          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,6 +107,7 @@ int	IRCServer::accept_new_client( void )
 		set_non_blocking(client_fd);
 		std::cout << "New client connected: " << client_fd << std::endl;
 	}
+	// display_welcome_message(client_fd);
 	return (client_fd);
 }
 
@@ -139,16 +140,23 @@ void	IRCServer::process_command( int client_fd, const std::string &message )
 {
 	std::istringstream	iss(message);
 	std::string			command;
+	ClientInfo			&client = this->clients[client_fd];
 
 	iss >> command;
 	if (!command.empty())
 	{
 		IRCCommand	*cmd = create_command(command);
+		if ((command != "USER") && (client.nickname.empty() && client.password.empty() && client.username.empty()))
+		{
+			send(client_fd, "Error: Must set username, password and nickname before speaking.\r\n", 67, 0);
+			delete cmd;
+			return ;
+		}
 		if (!cmd)
 		{
-			if (this->channels.find(this->clients[client_fd].current_channel) != this->channels.end())
+			if (this->channels.find(client.current_channel) != this->channels.end())
 			{
-				this->channels[this->clients[client_fd].current_channel].broadcast_except(this->clients[client_fd], message);
+				channels[client.current_channel].add_message(client, message, *this);
 			}
 			else
 			{
@@ -193,6 +201,12 @@ IRCCommand	*IRCServer::create_command( const std::string &command_name)
 		return new RejectCmd();
 	else if (command_name == "KICK")
 		return new KickCmd();
+	else if (command_name == "PRIVMSG")
+		return new PrivmsgCmd();
+	else if (command_name == "NOTICE")
+		return new NoticeCmd();
+	else if (command_name == "DEBUG")
+		return new DebugCmd();
 	return (nullptr);
 }
 

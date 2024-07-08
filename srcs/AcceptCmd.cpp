@@ -6,7 +6,7 @@
 /*   By: mcauchy <mcauchy@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/05 11:32:04 by mcauchy           #+#    #+#             */
-/*   Updated: 2024/07/05 16:19:08 by mcauchy          ###   ########.fr       */
+/*   Updated: 2024/07/08 15:55:20 by mcauchy          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,6 +45,8 @@ void	AcceptCmd::execute(IRCServer &server, int client_fd, std::istringstream &is
 	client.pending_invite.clear();
 
 	std::string join_message = ":" + client.nickname + " JOIN " + channel_name + "\r\n";
-	server.channels[channel_name].broadcast(join_message);
+	// server.channels[channel_name].broadcast(join_message);
+	server.channels[channel_name].display_channel(client_fd, server);
+	server.channels[channel_name].add_message(client, join_message, server);
 	std::cout << "Client " << client_fd << " accepted invitation and joined channel " << channel_name << std::endl;
 }
