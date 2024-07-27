@@ -6,7 +6,7 @@
 /*   By: mcauchy <mcauchy@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/01 13:51:03 by mcauchy           #+#    #+#             */
-/*   Updated: 2024/07/08 09:36:43 by mcauchy          ###   ########.fr       */
+/*   Updated: 2024/07/15 17:46:39 by mcauchy          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,7 @@ class	IRCServer
 		static void	signal_handler( int signum );
 		void		start( void );
 		int			GetServerFD( void );
+		bool	check_modes( ClientInfo &client, Channel &channel, std::string &command, int mode );
 
 		// void	display_welcome_message( int client_fd );
 

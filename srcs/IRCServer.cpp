@@ -6,7 +6,7 @@
 /*   By: mcauchy <mcauchy@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/01 14:07:09 by mcauchy           #+#    #+#             */
-/*   Updated: 2024/07/08 16:31:32 by mcauchy          ###   ########.fr       */
+/*   Updated: 2024/07/22 13:32:04 by mcauchy          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -146,7 +146,7 @@ void	IRCServer::process_command( int client_fd, const std::string &message )
 	if (!command.empty())
 	{
 		IRCCommand	*cmd = create_command(command);
-		if ((command != "USER") && (client.nickname.empty() && client.password.empty() && client.username.empty()))
+		if ((command != "USER" && command != "HELP" && command != "DEBUG") && (client.nickname.empty() && client.password.empty() && client.username.empty()))
 		{
 			send(client_fd, "Error: Must set username, password and nickname before speaking.\r\n", 67, 0);
 			delete cmd;
@@ -207,7 +207,49 @@ IRCCommand	*IRCServer::create_command( const std::string &command_name)
 		return new NoticeCmd();
 	else if (command_name == "DEBUG")
 		return new DebugCmd();
+	else if (command_name == "HELP")
+		return new HelpCmd();
+	else if (command_name == "MODE")
+		return new ModeCmd();
 	return (nullptr);
+}
+
+bool	IRCServer::check_modes( ClientInfo &client, Channel &channel, std::string &command, int mode)
+{
+	int	tmp_mode;
+
+	tmp_mode = mode;
+	if (command == "JOIN")
+	{
+		if (channel.has_mode(CM_INVITE_ONLY) && !channel.is_invited(client.client_fd))
+		{
+			send(client.client_fd, ERR_INVITE_ONLY, std::strlen(ERR_INVITE_ONLY), 0);
+			return (check_modes(client, channel, command, (mode & ~mode)));
+		}
+		else if (channel.has_mode(CM_KEY_PROTECTED))
+		{
+			std::map<std::string, std::string>::iterator	it;
+
+			for (it = client.channel_keys.begin(); it != client.channel_keys.end(); it++)
+			{
+				if (channel.GetKey() == it->second)
+					return (true);
+			}
+			send(client.client_fd, ERR_KEY_PROTECTED, std::strlen(ERR_KEY_PROTECTED), 0);
+			return (check_modes(client, channel, command, (mode & ~mode)));
+		}
+		else if (channel.has_mode(CM_USER_LIMIT) && channel.GetMembers().size() >= (size_t)channel.GetUlimit())
+		{
+			send(client.client_fd, ERR_USER_LIMIT, std::strlen(ERR_USER_LIMIT), 0);
+			return (check_modes(client, channel, command, (mode & ~mode)));
+		}
+		else if (channel.has_mode(CM_NO_ANONYMOUS) && client.nickname.empty())
+		{
+			send(client.client_fd, ERR_NO_ANONYMOUS, std::strlen(ERR_NO_ANONYMOUS), 0);
+			return (check_modes(client, channel, command, (mode & ~mode)));
+		}
+	}
+	return (true);
 }
 
 void	IRCServer::start( void )
@@ -216,7 +258,9 @@ void	IRCServer::start( void )
 	int		client_fd;
 	pollfd	client_pfd;
 	size_t	i;
+	Channel	general("general");
 
+	channels["general"] = general;
 	while (_signal == false)
 	{
 		poll_count = poll(_pollfds.data(), _pollfds.size(), -1);

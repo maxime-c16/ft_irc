@@ -6,7 +6,7 @@
 /*   By: mcauchy <mcauchy@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/03 18:52:08 by mcauchy           #+#    #+#             */
-/*   Updated: 2024/07/04 20:41:09 by mcauchy          ###   ########.fr       */
+/*   Updated: 2024/07/11 13:37:03 by mcauchy          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ void	NickCmd::execute(IRCServer &server, int client_fd, std::istringstream &iss)
 		if (!nickname.empty())
 		{
 			server.clients[client_fd].nickname = nickname;
-			std::cout << "Client " << client_fd << " set nickname to " << nickname << std::endl;
+			std::cout << "Client " << client_fd << " set nickname to " << server.clients[client_fd].nickname << std::endl;
 		}
 		else
 		{

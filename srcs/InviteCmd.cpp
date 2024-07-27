@@ -6,7 +6,7 @@
 /*   By: mcauchy <mcauchy@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/05 11:01:32 by mcauchy           #+#    #+#             */
-/*   Updated: 2024/07/07 14:42:08 by mcauchy          ###   ########.fr       */
+/*   Updated: 2024/07/10 12:40:55 by mcauchy          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,6 +60,7 @@ void	InviteCmd::execute(IRCServer &server, int client_fd, std::istringstream &is
 	}
 
 	server.clients[target_fd].pending_invite = channel_name;
+	server.channels[channel_name].SetInvited(client_fd);
 	std::string invite_message = ":" + server.clients[client_fd].nickname + " INVITE " + nickname + " to " + channel_name + "\r\n";
 	send(target_fd, invite_message.c_str(), invite_message.size(), 0);
 	send(client_fd, invite_message.c_str(), invite_message.size(), 0);

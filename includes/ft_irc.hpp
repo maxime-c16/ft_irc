@@ -6,7 +6,7 @@
 /*   By: mcauchy <mcauchy@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/01 13:15:10 by mcauchy           #+#    #+#             */
-/*   Updated: 2024/07/08 16:25:16 by mcauchy          ###   ########.fr       */
+/*   Updated: 2024/07/10 15:30:57 by mcauchy          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,7 @@
 # define WHITE		"\033[37m"
 # define BOLD		"\033[1m"
 # define UNDERLINE	"\033[4m"
+# define CLEAR		"\033[2J\033[H"
 
 # include <iostream>
 # include <string>
@@ -45,6 +46,7 @@
 # include <csignal>
 # include <ctime>
 # include <sstream>
+# include "ChannelModes.hpp"
 
 typedef struct s_ClientInfo
 {
@@ -52,11 +54,18 @@ typedef struct s_ClientInfo
 	std::string	username;
 	std::string	realname;
 	std::string	password;
-	std::string	current_channel;
 	std::string	pending_invite;
+	std::string	current_channel;
+
+	std::set<std::string>				joined_channel;
+	std::map<std::string, int>			admin_privs;
+	std::map<std::string, std::string>	channel_keys;
+
 	int			client_fd;
 	bool		is_registered;
 	bool		is_operator;
+
+
 	bool		operator<( const struct s_ClientInfo &other ) const {
 		return (client_fd < other.client_fd || (client_fd == other.client_fd && nickname < other.nickname)
 				|| (client_fd == other.client_fd && nickname == other.nickname && username < other.username));
@@ -81,6 +90,8 @@ typedef struct s_ClientInfo
 # include "PrivmsgCmd.hpp"
 # include "NoticeCmd.hpp"
 # include "DebugCmd.hpp"
+# include "HelpCmd.hpp"
+# include "ModeCmd.hpp"
 # include "IRCCommand.hpp"
 
 #endif

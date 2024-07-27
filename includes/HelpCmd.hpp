@@ -1,26 +1,25 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   JoinCmd.hpp                                        :+:      :+:    :+:   */
+/*   HelpCmd.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mcauchy <mcauchy@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/07/04 21:22:51 by mcauchy           #+#    #+#             */
-/*   Updated: 2024/07/09 16:05:47 by mcauchy          ###   ########.fr       */
+/*   Created: 2024/07/08 18:10:05 by mcauchy           #+#    #+#             */
+/*   Updated: 2024/07/08 18:10:31 by mcauchy          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef JOINCMD_HPP
+#ifndef HELPCMD_HPP
 
-# define JOINCMD_HPP
+# define HELPCMD_HPP
 
 # include "IRCCommand.hpp"
 # include "IRCServer.hpp"
 
-class	JoinCmd : public IRCCommand
+class	HelpCmd : public IRCCommand
 {
 	public:
-		std::string	name;
 		virtual	void	execute(IRCServer &server, int client_fd, std::istringstream &iss);
 };
 

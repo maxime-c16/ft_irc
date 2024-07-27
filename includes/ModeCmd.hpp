@@ -1,27 +1,30 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   JoinCmd.hpp                                        :+:      :+:    :+:   */
+/*   ModeCmd.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mcauchy <mcauchy@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/07/04 21:22:51 by mcauchy           #+#    #+#             */
-/*   Updated: 2024/07/09 16:05:47 by mcauchy          ###   ########.fr       */
+/*   Created: 2024/07/10 13:22:51 by mcauchy           #+#    #+#             */
+/*   Updated: 2024/07/10 13:27:31 by mcauchy          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef JOINCMD_HPP
+#ifndef MODECMD_HPP
 
-# define JOINCMD_HPP
+# define MODECMD_HPP
 
 # include "IRCCommand.hpp"
 # include "IRCServer.hpp"
 
-class	JoinCmd : public IRCCommand
+class	ModeCmd : public IRCCommand
 {
 	public:
-		std::string	name;
 		virtual	void	execute(IRCServer &server, int client_fd, std::istringstream &iss);
+
+	private:
+		bool	is_valid_mode( const std::string &mode );
+		int		get_mode_flag( const std::string &mode );
 };
 
 #endif
